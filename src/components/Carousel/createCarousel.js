@@ -1,24 +1,24 @@
-import simplyReactive from 'simply-reactive'
+import simplyReactive from "@wildfluss/simply-reactive";
 
-import { NEXT, PREV } from '../../direction'
+import { NEXT, PREV } from "../../direction";
 import {
   getCurrentPageIndexByCurrentParticleIndex,
   getPartialPageSize,
   getPagesCountByParticlesCount,
   getParticleIndexByPageIndex,
-} from '../../utils/page'
-import { getClonesCount } from '../../utils/clones'
-import { getAdjacentIndexes } from '../../utils/lazy'
-import { getValueInRange } from '../../utils/math'
-import { get, switcher } from '../../utils/object'
-import { ProgressManager } from '../../utils/ProgressManager'
+} from "../../utils/page";
+import { getClonesCount } from "../../utils/clones";
+import { getAdjacentIndexes } from "../../utils/lazy";
+import { getValueInRange } from "../../utils/math";
+import { get, switcher } from "../../utils/object";
+import { ProgressManager } from "../../utils/ProgressManager";
 
 function createCarousel(onChange) {
   const progressManager = new ProgressManager({
     onProgressValueChange: (value) => {
-      onChange('progressValue', 1 - value)
+      onChange("progressValue", 1 - value);
     },
-  })
+  });
 
   const reactive = simplyReactive(
     {
@@ -41,7 +41,7 @@ function createCarousel(onChange) {
         pauseOnFocus: false,
         focused: false,
         autoplay: false,
-        autoplayDirection: 'next',
+        autoplayDirection: "next",
         disabled: false, // disable page change while animation is in progress
         durationMsInit: 1000,
         durationMs: 1000,
@@ -58,7 +58,7 @@ function createCarousel(onChange) {
             particlesCount: data.particlesCountWithoutClones,
             particlesToShow: data.particlesToShow,
             particlesToScroll: data.particlesToScroll,
-          }).particleIndexes
+          }).particleIndexes;
         },
         setCurrentPageIndex({ data }) {
           data.currentPageIndex = getCurrentPageIndexByCurrentParticleIndex({
@@ -68,45 +68,45 @@ function createCarousel(onChange) {
             clonesCountTotal: data.clonesCountTotal,
             infinite: data.infinite,
             particlesToScroll: data.particlesToScroll,
-          })
+          });
         },
         setPartialPageSize({ data }) {
           data.partialPageSize = getPartialPageSize({
             particlesToScroll: data.particlesToScroll,
             particlesToShow: data.particlesToShow,
             particlesCountWithoutClones: data.particlesCountWithoutClones,
-          })
+          });
         },
         setClonesCount({ data }) {
           const { head, tail } = getClonesCount({
             infinite: data.infinite,
             particlesToShow: data.particlesToShow,
             partialPageSize: data.partialPageSize,
-          })
-          data.clonesCountHead = head
-          data.clonesCountTail = tail
-          data.clonesCountTotal = head + tail
+          });
+          data.clonesCountHead = head;
+          data.clonesCountTail = tail;
+          data.clonesCountTotal = head + tail;
         },
         setProgressManagerAutoplayDuration({ data }) {
-          progressManager.setAutoplayDuration(data.autoplayDuration)
+          progressManager.setAutoplayDuration(data.autoplayDuration);
         },
         toggleProgressManager({ data: { pauseOnFocus, focused } }) {
           // as focused is in if block, it will not be put to deps, read them in data: {}
           if (pauseOnFocus) {
             if (focused) {
-              progressManager.pause()
+              progressManager.pause();
             } else {
-              progressManager.resume()
+              progressManager.resume();
             }
           }
         },
         initDuration({ data }) {
-          data.durationMs = data.durationMsInit
+          data.durationMs = data.durationMsInit;
         },
         applyAutoplay({ data, methods: { _applyAutoplayIfNeeded } }) {
           // prevent _applyAutoplayIfNeeded to be called with watcher
           // to prevent its data added to deps
-          data.autoplay && _applyAutoplayIfNeeded(data.autoplay)
+          data.autoplay && _applyAutoplayIfNeeded(data.autoplay);
         },
         setPagesCount({ data }) {
           data.pagesCount = getPagesCountByParticlesCount({
@@ -114,21 +114,21 @@ function createCarousel(onChange) {
             particlesCountWithoutClones: data.particlesCountWithoutClones,
             particlesToScroll: data.particlesToScroll,
             particlesToShow: data.particlesToShow,
-          })
+          });
         },
         setParticlesToShow({ data }) {
           data.particlesToShow = getValueInRange(
             1,
             data.particlesToShowInit,
             data.particlesCountWithoutClones
-          )
+          );
         },
         setParticlesToScroll({ data }) {
           data.particlesToScroll = getValueInRange(
             1,
             data.particlesToScrollInit,
             data.particlesCountWithoutClones
-          )
+          );
         },
       },
       methods: {
@@ -141,7 +141,7 @@ function createCarousel(onChange) {
             particlesToScroll: data.particlesToScroll,
             particlesCount: data.particlesCount,
             particlesToShow: data.particlesToShow,
-          })
+          });
         },
         _next({ data }) {
           data.currentParticleIndex = getParticleIndexByPageIndex({
@@ -152,17 +152,17 @@ function createCarousel(onChange) {
             particlesToScroll: data.particlesToScroll,
             particlesCount: data.particlesCount,
             particlesToShow: data.particlesToShow,
-          })
+          });
         },
         _moveToParticle({ data }, particleIndex) {
           data.currentParticleIndex = getValueInRange(
             0,
             particleIndex,
             data.particlesCount - 1
-          )
+          );
         },
         toggleFocused({ data }) {
-          data.focused = !data.focused
+          data.focused = !data.focused;
         },
         async _applyAutoplayIfNeeded({ data, methods }) {
           // prevent progress change if not infinite for first and last page
@@ -173,8 +173,8 @@ function createCarousel(onChange) {
               (data.autoplayDirection === PREV &&
                 data.currentParticleIndex === 0))
           ) {
-            progressManager.reset()
-            return
+            progressManager.reset();
+            return;
           }
 
           if (data.autoplay) {
@@ -182,14 +182,14 @@ function createCarousel(onChange) {
               switcher({
                 [NEXT]: async () => methods.showNextPage(),
                 [PREV]: async () => methods.showPrevPage(),
-              })(data.autoplayDirection)
+              })(data.autoplayDirection);
 
-            await progressManager.start(onFinish)
+            await progressManager.start(onFinish);
           }
         },
         // makes delayed jump to 1st or last element
         async _jumpIfNeeded({ data, methods }) {
-          let jumped = false
+          let jumped = false;
           if (data.infinite) {
             if (data.currentParticleIndex === 0) {
               await methods.showParticle(
@@ -197,45 +197,47 @@ function createCarousel(onChange) {
                 {
                   animated: false,
                 }
-              )
-              jumped = true
+              );
+              jumped = true;
             } else if (
               data.currentParticleIndex ===
               data.particlesCount - data.clonesCountTail
             ) {
               await methods.showParticle(data.clonesCountHead, {
                 animated: false,
-              })
-              jumped = true
+              });
+              jumped = true;
             }
           }
-          return jumped
+          return jumped;
         },
         async changePage({ data, methods }, updateStoreFn, options) {
-          progressManager.reset()
-          if (data.disabled) return
-          data.disabled = true
+          progressManager.reset();
+          if (data.disabled) return;
+          data.disabled = true;
 
-          updateStoreFn()
-          await methods.offsetPage({ animated: get(options, 'animated', true) })
-          data.disabled = false
+          updateStoreFn();
+          await methods.offsetPage({
+            animated: get(options, "animated", true),
+          });
+          data.disabled = false;
 
-          const jumped = await methods._jumpIfNeeded()
-          !jumped && methods._applyAutoplayIfNeeded() // no need to wait it finishes
+          const jumped = await methods._jumpIfNeeded();
+          !jumped && methods._applyAutoplayIfNeeded(); // no need to wait it finishes
         },
         async showNextPage({ data, methods }, options) {
-          if (data.disabled) return
-          await methods.changePage(methods._next, options)
+          if (data.disabled) return;
+          await methods.changePage(methods._next, options);
         },
         async showPrevPage({ data, methods }, options) {
-          if (data.disabled) return
-          await methods.changePage(methods._prev, options)
+          if (data.disabled) return;
+          await methods.changePage(methods._prev, options);
         },
         async showParticle({ methods }, particleIndex, options) {
           await methods.changePage(
             () => methods._moveToParticle(particleIndex),
             options
-          )
+          );
         },
         _getParticleIndexByPageIndex({ data }, pageIndex) {
           return getParticleIndexByPageIndex({
@@ -246,32 +248,32 @@ function createCarousel(onChange) {
             particlesToScroll: data.particlesToScroll,
             particlesCount: data.particlesCount,
             particlesToShow: data.particlesToShow,
-          })
+          });
         },
         async showPage({ methods }, pageIndex, options) {
-          const particleIndex = methods._getParticleIndexByPageIndex(pageIndex)
-          await methods.showParticle(particleIndex, options)
+          const particleIndex = methods._getParticleIndexByPageIndex(pageIndex);
+          await methods.showParticle(particleIndex, options);
         },
         offsetPage({ data }, options) {
-          const animated = get(options, 'animated', true)
+          const animated = get(options, "animated", true);
           return new Promise((resolve) => {
             // durationMs is an offset animation time
-            data.durationMs = animated ? data.durationMsInit : 0
-            data.offset = -data.currentParticleIndex * data.particleWidth
+            data.durationMs = animated ? data.durationMsInit : 0;
+            data.offset = -data.currentParticleIndex * data.particleWidth;
             setTimeout(() => {
-              resolve()
-            }, data.durationMs)
-          })
+              resolve();
+            }, data.durationMs);
+          });
         },
       },
     },
     {
       onChange,
     }
-  )
-  const [data, methods] = reactive
+  );
+  const [data, methods] = reactive;
 
-  return [{ data, progressManager }, methods, reactive._internal]
+  return [{ data, progressManager }, methods, reactive._internal];
 }
 
-export default createCarousel
+export default createCarousel;

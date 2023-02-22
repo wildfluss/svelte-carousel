@@ -1,6 +1,6 @@
 {
-  "name": "svelte-carousel",
-  "version": "1.0.22",
+  "name": "@wildfluss/svelte-carousel",
+  "version": "1.0.26",
   "description": "Svelte carousel",
   "main": "src/main.js",
   "module": "src/main.js",
@@ -57,6 +57,6 @@
     "svelte-loader": "^2.13.6"
   },
   "dependencies": {
-    "simply-reactive": "@wildfluss/simply-reactive@1.0.0"
+    "@wildfluss/simply-reactive": "1.0.3"
   }
 }
